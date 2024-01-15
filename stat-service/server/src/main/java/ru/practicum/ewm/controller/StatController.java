@@ -22,17 +22,6 @@ public class StatController {
 
     private final StatService statService;
 
-    @GetMapping
-    public String sayHello() {
-        return
-                "<!DOCTYPE html>" +
-                        "<html>" +
-                        "	<head><title>This is a stat service</title></head>" +
-                        "	<body>Hi! This is a stat service</body>" +
-                        "</html>"
-                ;
-    }
-
     @PostMapping("/hit")
     public void saveHit(@RequestBody EndpointHit endpointHit) {
         log.info("Invoke saveHit method with app = {} and uri = {}", endpointHit.getApp(), endpointHit.getUri());
