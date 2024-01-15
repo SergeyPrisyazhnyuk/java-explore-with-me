@@ -36,7 +36,7 @@ public class StatController {
     @PostMapping("/hit")
     public void saveHit(@RequestBody EndpointHit endpointHit) {
         log.info("Invoke saveHit method with app = {} and uri = {}", endpointHit.getApp(), endpointHit.getUri());
-
+        statService.saveHit(endpointHit);
     }
 
 
