@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-@RestController
 @Slf4j
+@RestController
 @RequiredArgsConstructor
-//@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class StatController {
 
     private final StatService statService;
