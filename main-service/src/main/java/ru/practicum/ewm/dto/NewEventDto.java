@@ -2,7 +2,6 @@ package ru.practicum.ewm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.ewm.model.enums.EventState;
 
 import java.time.LocalDateTime;
 
