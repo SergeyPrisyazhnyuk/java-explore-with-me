@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Compilations {
+public class Compilation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class Compilations {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Compilations that = (Compilations) o;
+        Compilation that = (Compilation) o;
         return pinned == that.pinned && Objects.equals(id, that.id) && Objects.equals(events, that.events) && Objects.equals(title, that.title);
     }
 
