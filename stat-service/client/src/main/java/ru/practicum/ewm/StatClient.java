@@ -61,4 +61,16 @@ public class StatClient extends BaseClient {
 
         return get(resultString, parameters);
     }
+
+    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris,
+                                           Boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start.format(formatter),
+                "end", end.format(formatter),
+                "uris", String.join(",", uris),
+                "unique", unique
+        );
+        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+    }
+
 }

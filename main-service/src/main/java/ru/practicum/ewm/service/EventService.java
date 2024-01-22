@@ -1,16 +1,18 @@
 package ru.practicum.ewm.service;
 
 import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.dto.lookupparam.PublicGetEventsParams;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventService {
 
-    List<EventShortDto> getEvents();
+    List<EventShortDto> getEvents(PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest);
 
-    EventFullDto getEventById(Long eventId);
+    EventFullDto getEventById(Long eventId, HttpServletRequest httpServletRequest);
 
-    List<EventShortDto> getEventsByUserId(Long userId);
+    List<EventFullDto> getEventsByUserId(Long userId, Integer from, Integer size);
 
     EventFullDto addEvent(Long userId, NewEventDto newEventDto);
 
