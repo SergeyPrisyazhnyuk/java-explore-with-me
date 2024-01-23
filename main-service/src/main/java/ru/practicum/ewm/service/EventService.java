@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service;
 
 import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
 import ru.practicum.ewm.dto.lookupparam.PublicGetEventsParams;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ public interface EventService {
 
     EventRequestStatusUpdateResult updateEventRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest);
 
-    List<EventFullDto> getEventsByAdmin();
+    List<EventFullDto> getEventsByAdmin(AdminGetEventsParams adminGetEventsParams);
 
     EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest);
 

@@ -31,11 +31,11 @@ public class UpdateEventUserRequest {
 
     private LocationDto location;
 
-    private boolean paid;
+    private Boolean paid;
 
     private Integer participantLimit;
 
-    private boolean requestModeration;
+    private Boolean requestModeration;
 
     private UserEventState stateAction;
 
