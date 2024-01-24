@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.NewUserRequest;
 import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.dto.mapper.UserMapper;
-import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.UserRepository;
 import ru.practicum.ewm.utility.CheckUtil;
@@ -21,8 +20,6 @@ public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
     private final CheckUtil checkUtil;
-
-
 
     @Override
     public List<UserDto> getUsers(List<Long> userIds, Integer from, Integer size) {

@@ -8,7 +8,6 @@ import ru.practicum.ewm.dto.CompilationDto;
 import ru.practicum.ewm.dto.NewCompilationDto;
 import ru.practicum.ewm.dto.UpdateCompilationRequest;
 import ru.practicum.ewm.dto.mapper.CompilationMapper;
-import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ParameterException;
 import ru.practicum.ewm.model.Compilation;
 import ru.practicum.ewm.model.Event;
@@ -27,10 +26,6 @@ public class CompilationServiceImpl implements CompilationService{
     private final EventRepository eventRepository;
     private final CheckUtil checkUtil;
 
-    private Compilation checkCompId(Long compId) {
-
-        return compilationRepository.findById(compId).orElseThrow(() -> new NotFoundException("Not found compilation with id = " + compId));
-    }
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
@@ -53,7 +48,7 @@ public class CompilationServiceImpl implements CompilationService{
     @Override
     public CompilationDto getCompilationById(Long compId) {
 
-        return CompilationMapper.toCompilationDto(checkCompId(compId));
+        return CompilationMapper.toCompilationDto(checkUtil.checkCompId(compId));
     }
 
     @Override
@@ -76,7 +71,7 @@ public class CompilationServiceImpl implements CompilationService{
     @Transactional
     public void deleteCompilationById(Long compId) {
 
-        checkCompId(compId);
+        checkUtil.checkCompId(compId);
         compilationRepository.deleteById(compId);
     }
 
@@ -84,7 +79,7 @@ public class CompilationServiceImpl implements CompilationService{
     @Transactional
     public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
 
-        Compilation compilation = checkCompId(compId);
+        Compilation compilation = checkUtil.checkCompId(compId);
 
         Set<Long> eventIds = updateCompilationRequest.getEvents();
 

@@ -24,11 +24,7 @@ public class CategoryServiceImpl implements CategoryService{
     private final EventRepository eventRepository;
     private final CheckUtil checkUtil;
 
-    private void checkUniqNameCategory(String name) {
-        if (categoryRepository.existsByNameIgnoreCase(name)) {
-            throw new AlreadyExistsException(("Category already exists: " + name));
-        }
-    }
+
 
     @Override
     public List<CategoryDto> getCategories(Integer from, Integer size) {
@@ -78,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService{
         String categoryNewName = categoryDto.getName();
 
         if (categoryNewName != null && !category.getName().equals(categoryNewName)) {
-            checkUniqNameCategory(categoryNewName);
+            checkUtil.checkUniqNameCategory(categoryNewName);
         }
 
         category.setName(categoryNewName);
