@@ -1,12 +1,14 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.EndpointHit;
 import ru.practicum.ewm.StatClient;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
@@ -37,13 +39,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService{
 
-    private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
-    private final UserRepository userRepository;
     private final StatClient statClient;
     private final CheckUtil checkUtil;
+
+    @Value("${server.application.name:ewm-service}")
+    private String appName;
+
+    private void saveStatsHit(HttpServletRequest httpServletRequest) {
+        statClient.saveHit(EndpointHit.builder()
+                .app(appName)
+                        .uri(httpServletRequest.getRequestURI())
+                        .ip(httpServletRequest.getRemoteAddr())
+                        .timestamp(LocalDateTime.now())
+                .build());
+
+    }
+
 
     @Override
     public List<EventShortDto> getEvents(PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest) {

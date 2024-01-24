@@ -42,6 +42,10 @@ public class StatClient extends BaseClient {
         return post(endpointHit);
     }
 
+    public void saveHit(EndpointHit endpointHit) {
+        post(endpointHit);
+    }
+
     public ResponseEntity<Object> getHit(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
 
         String resultString = "/stats?start={start}&end={end}";
