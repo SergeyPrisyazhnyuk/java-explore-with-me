@@ -34,7 +34,7 @@ public class AdminUserController {
         return userService.addUser(newUserRequest);
     }
 
-    @DeleteMapping("/userId")
+    @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
         log.info("Invoked AdminUserController.deleteUser method with userId={}", userId);
         userService.deleteUser(userId);
