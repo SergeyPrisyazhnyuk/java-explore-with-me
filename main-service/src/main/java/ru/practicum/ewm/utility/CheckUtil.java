@@ -1,6 +1,7 @@
 package ru.practicum.ewm.utility;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.exception.AlreadyExistsException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.Category;
@@ -12,6 +13,7 @@ import ru.practicum.ewm.repository.CompilationRepository;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.UserRepository;
 
+@Component
 @RequiredArgsConstructor
 public class CheckUtil {
 

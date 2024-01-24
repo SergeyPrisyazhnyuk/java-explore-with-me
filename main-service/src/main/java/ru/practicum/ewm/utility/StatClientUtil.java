@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.EndpointHit;
 import ru.practicum.ewm.StatClient;
 import ru.practicum.ewm.ViewStats;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
+@Component
 @RequiredArgsConstructor
 public class StatClientUtil {
 

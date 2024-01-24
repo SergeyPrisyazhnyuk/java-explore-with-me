@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository;
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
+    @Autowired
     private final CheckUtil checkUtil;
     private final StatClientUtil statClientUtil;
 
@@ -90,7 +92,7 @@ public class EventServiceImpl implements EventService{
 
         // event status
         specification = specification.and((root, query, cb) ->
-                cb.equal(root.get("eventStatus"), EventState.PUBLISHED));
+                cb.equal(root.get("state"), EventState.PUBLISHED));
 
 
         String sort = (publicGetEventsParams.getSort() != null && publicGetEventsParams.getSort().equalsIgnoreCase("EVENT_DATE"))
