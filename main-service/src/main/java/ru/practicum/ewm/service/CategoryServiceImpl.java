@@ -7,12 +7,11 @@ import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.dto.NewCategoryDto;
 import ru.practicum.ewm.dto.mapper.CategoryMapper;
 import ru.practicum.ewm.exception.AlreadyExistsException;
-import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.Category;
-import ru.practicum.ewm.model.Compilation;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
+import ru.practicum.ewm.utility.CheckUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,13 +20,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService{
 
-    CategoryRepository categoryRepository;
-    EventRepository eventRepository;
-
-    private Category checkCatId(Long catId) {
-
-        return categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Not found category with id = " + catId));
-    }
+    private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
+    private final CheckUtil checkUtil;
 
     private void checkUniqNameCategory(String name) {
         if (categoryRepository.existsByNameIgnoreCase(name)) {
@@ -47,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryDto getCategoryById(Long catId) {
 
-        Category category = checkCatId(catId);
+        Category category = checkUtil.checkCatId(catId);
 
         return CategoryMapper.toCategoryDto(category);
     }
@@ -63,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public void deleteCategoryById(Long catId) {
-        Category category = checkCatId(catId);
+        Category category = checkUtil.checkCatId(catId);
 
         List<Event> events = eventRepository.findByCategory(category);
 
@@ -78,7 +73,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
 
-        Category category = checkCatId(catId);
+        Category category = checkUtil.checkCatId(catId);
 
         String categoryNewName = categoryDto.getName();
 

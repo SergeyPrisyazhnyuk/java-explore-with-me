@@ -23,6 +23,7 @@ import ru.practicum.ewm.model.enums.EventState;
 import ru.practicum.ewm.model.enums.RequestStatus;
 import ru.practicum.ewm.model.enums.UserEventState;
 import ru.practicum.ewm.repository.*;
+import ru.practicum.ewm.utility.CheckUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -42,27 +43,7 @@ public class EventServiceImpl implements EventService{
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
     private final StatClient statClient;
-
-
-    private Event checkEventId(Long eventId) {
-
-        return eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Not found event with id = " + eventId));
-    }
-
-    private User checkUserId(Long userId) {
-
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user with id = " + userId));
-    }
-
-    private Category checkCatId(Long catId) {
-
-        return categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Not found category with id = " + catId));
-    }
-
-    private Event checkEventInitiator(Long eventId, Long userId) {
-        return eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new NotFoundException("Not found event with id = " + eventId + " and user = " + userId));
-    }
-
+    private final CheckUtil checkUtil;
 
     @Override
     public List<EventShortDto> getEvents(PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest) {
@@ -149,7 +130,7 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventFullDto getEventById(Long eventId, HttpServletRequest httpServletRequest) {
 
-        Event event = checkEventId(eventId);
+        Event event = checkUtil.checkEventId(eventId);
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("Not found event with id = " + eventId);
@@ -166,7 +147,7 @@ public class EventServiceImpl implements EventService{
     @Override
     public List<EventFullDto> getEventsByUserId(Long userId, Integer from, Integer size) {
 
-        checkUserId(userId);
+        checkUtil.checkUserId(userId);
 
         PageRequest pageRequest = PageRequest.of(from / size, size);
 
@@ -183,8 +164,8 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
 
-        User user = checkUserId(userId);
-        Category category = checkCatId(newEventDto.getCategory().getId());
+        User user = checkUtil.checkUserId(userId);
+        Category category = checkUtil.checkCatId(newEventDto.getCategory().getId());
 
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ParameterException("EventDate should be after current date + 2 hours");
@@ -214,8 +195,8 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventFullDto getEventByUserIdAndEventId(Long userId, Long eventId) {
 
-        checkUserId(userId);
-        Event event = checkEventInitiator(eventId, userId);
+        checkUtil.checkUserId(userId);
+        Event event = checkUtil.checkEventInitiator(eventId, userId);
 
         return EventMapper.toEventFullDto(event);
     }
@@ -223,8 +204,8 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventFullDto updateEventByUserIdAndEventId(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
 
-        checkUserId(userId);
-        Event event = checkEventInitiator(eventId, userId);
+        checkUtil.checkUserId(userId);
+        Event event = checkUtil.checkEventInitiator(eventId, userId);
 
         if (event.getState().equals(EventState.PUBLISHED)) {
             throw new CommonException("Event is already PUBLISHED");
@@ -244,7 +225,7 @@ public class EventServiceImpl implements EventService{
 
         Long categoryNew = updateEventUserRequest.getCategory();
         if (categoryNew != null) {
-            Category category = checkCatId(categoryNew);
+            Category category = checkUtil.checkCatId(categoryNew);
             event.setCategory(category);
             changeable = true;
         }
@@ -312,8 +293,8 @@ public class EventServiceImpl implements EventService{
     @Override
     public List<ParticipationRequestDto> getEventParticipationRequests(Long userId, Long eventId) {
 
-        checkUserId(userId);
-        checkEventInitiator(eventId, userId);
+        checkUtil.checkUserId(userId);
+        checkUtil.checkEventInitiator(eventId, userId);
 
         List<Request> requestList = requestRepository.findAllByEventId(eventId);
 
@@ -323,8 +304,8 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventRequestStatusUpdateResult updateEventRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
 
-        User user = checkUserId(userId);
-        Event event = checkEventInitiator(eventId, userId);
+        User user = checkUtil.checkUserId(userId);
+        Event event = checkUtil.checkEventInitiator(eventId, userId);
 
         if (!event.isRequestModeration() || event.getParticipantLimit() == 0) {
             throw new CommonException("This event doesn't need approve");
@@ -451,7 +432,7 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
 
-        Event event = checkEventId(eventId);
+        Event event = checkUtil.checkEventId(eventId);
 
         if (updateEventAdminRequest.getEventDate() != null) {
             LocalDateTime eventDate = updateEventAdminRequest.getEventDate();
@@ -477,7 +458,7 @@ public class EventServiceImpl implements EventService{
 
         Long categoryNew = updateEventAdminRequest.getCategory();
         if (categoryNew != null) {
-            Category category = checkCatId(categoryNew);
+            Category category = checkUtil.checkCatId(categoryNew);
             event.setCategory(category);
             changeable = true;
         }

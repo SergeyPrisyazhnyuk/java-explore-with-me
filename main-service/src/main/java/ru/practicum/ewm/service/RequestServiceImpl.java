@@ -15,6 +15,7 @@ import ru.practicum.ewm.model.enums.RequestStatus;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.RequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
+import ru.practicum.ewm.utility.CheckUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,21 +28,12 @@ public class RequestServiceImpl implements RequestService{
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-
-    private Event checkEventId(Long eventId) {
-
-        return eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Not found event with id = " + eventId));
-    }
-
-    private User checkUserId(Long userId) {
-
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user with id = " + userId));
-    }
+    private final CheckUtil checkUtil;
 
     @Override
     public List<ParticipationRequestDto> getRequests(Long userId) {
 
-        checkUserId(userId);
+        checkUtil.checkUserId(userId);
         List<Request> requestList = requestRepository.findAllByRequesterId(userId);
 
         return requestList.stream().map(RequestMapper::toParticipationRequestDto).collect(Collectors.toList());
@@ -50,8 +42,8 @@ public class RequestServiceImpl implements RequestService{
     @Override
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
 
-        User user = checkUserId(userId);
-        Event event = checkEventId(eventId);
+        User user = checkUtil.checkUserId(userId);
+        Event event = checkUtil.checkEventId(eventId);
 
 
         if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
@@ -92,7 +84,7 @@ public class RequestServiceImpl implements RequestService{
     @Override
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
 
-        checkUserId(userId);
+        checkUtil.checkUserId(userId);
 
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId).orElseThrow(
                 () -> new NotFoundException("Request with id = " + requestId + "not found"));

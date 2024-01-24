@@ -14,6 +14,7 @@ import ru.practicum.ewm.model.Compilation;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.repository.CompilationRepository;
 import ru.practicum.ewm.repository.EventRepository;
+import ru.practicum.ewm.utility.CheckUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class CompilationServiceImpl implements CompilationService{
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final CheckUtil checkUtil;
 
     private Compilation checkCompId(Long compId) {
 

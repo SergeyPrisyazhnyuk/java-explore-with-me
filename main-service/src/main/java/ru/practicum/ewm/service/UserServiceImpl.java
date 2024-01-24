@@ -10,6 +10,7 @@ import ru.practicum.ewm.dto.mapper.UserMapper;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.UserRepository;
+import ru.practicum.ewm.utility.CheckUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +20,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final CheckUtil checkUtil;
 
-    private User checkUserId(Long userId) {
 
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user with id = " + userId));
-    }
 
     @Override
     public List<UserDto> getUsers(List<Long> userIds, Integer from, Integer size) {
@@ -43,7 +42,6 @@ public class UserServiceImpl implements UserService{
         }
 
         return userDto;
-
     }
 
     @Override
@@ -56,7 +54,7 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public void deleteUser(Long userId) {
-        User user = checkUserId(userId);
+        User user = checkUtil.checkUserId(userId);
         userRepository.delete(user);
     }
 }
