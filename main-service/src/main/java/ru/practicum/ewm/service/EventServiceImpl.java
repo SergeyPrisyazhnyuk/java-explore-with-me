@@ -1,15 +1,12 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.EndpointHit;
-import ru.practicum.ewm.StatClient;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
 import ru.practicum.ewm.dto.lookupparam.PublicGetEventsParams;
@@ -26,6 +23,7 @@ import ru.practicum.ewm.model.enums.RequestStatus;
 import ru.practicum.ewm.model.enums.UserEventState;
 import ru.practicum.ewm.repository.*;
 import ru.practicum.ewm.utility.CheckUtil;
+import ru.practicum.ewm.utility.StatClientUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -42,25 +40,14 @@ public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository;
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
-    private final StatClient statClient;
     private final CheckUtil checkUtil;
-
-    @Value("${server.application.name:ewm-service}")
-    private String appName;
-
-    private void saveStatsHit(HttpServletRequest httpServletRequest) {
-        statClient.saveHit(EndpointHit.builder()
-                .app(appName)
-                        .uri(httpServletRequest.getRequestURI())
-                        .ip(httpServletRequest.getRemoteAddr())
-                        .timestamp(LocalDateTime.now())
-                .build());
-
-    }
+    private final StatClientUtil statClientUtil;
 
 
     @Override
     public List<EventShortDto> getEvents(PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest) {
+
+        statClientUtil.saveStatHit(httpServletRequest);
 
         Specification<Event> specification = Specification.where(null);
 
@@ -126,16 +113,13 @@ public class EventServiceImpl implements EventService{
             }
         }
 
-        for (EventShortDto event : eventShortDtoList) {
-            Long views = event.getViews();
-            if (views >= 0) {
-                event.setViews(views + 1L);
-            } else {
-                event.setViews(1L);
-            }
-        }
+        Map<Long, Integer> statViews = statClientUtil.getStatViewAll(eventList);
 
-        statClient.saveHit(httpServletRequest);
+        for (EventShortDto event : eventShortDtoList) {
+//            Long views = event.getViews();
+              Long views = Long.valueOf(statViews.getOrDefault(event.getId(),0));
+              event.setViews(views);
+        }
 
         return eventShortDtoList;
     }
@@ -144,6 +128,8 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventFullDto getEventById(Long eventId, HttpServletRequest httpServletRequest) {
 
+        statClientUtil.saveStatHit(httpServletRequest);
+
         Event event = checkUtil.checkEventId(eventId);
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
@@ -151,9 +137,11 @@ public class EventServiceImpl implements EventService{
         }
 
         EventFullDto eventFullDto = EventMapper.toEventFullDto(event);
-        eventFullDto.setViews(event.getViews() + 1L);
 
-        statClient.saveHit(httpServletRequest);
+        Map<Long, Integer> statViews = statClientUtil.getStatViewAll(List.of(event));
+
+        Long views = Long.valueOf(statViews.getOrDefault(event.getId(),0));
+        event.setViews(views);
 
         return eventFullDto;
     }

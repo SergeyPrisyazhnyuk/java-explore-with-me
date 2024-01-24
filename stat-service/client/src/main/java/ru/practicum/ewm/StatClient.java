@@ -5,10 +5,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -30,7 +26,7 @@ public class StatClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> saveHit(HttpServletRequest httpServletRequest) {
+/*    public ResponseEntity<Object> saveHit(HttpServletRequest httpServletRequest) {
 
         final EndpointHit endpointHit = EndpointHit.builder()
                 .app(app)
@@ -40,7 +36,7 @@ public class StatClient extends BaseClient {
                 .build();
 
         return post(endpointHit);
-    }
+    }*/
 
     public void saveHit(EndpointHit endpointHit) {
         post(endpointHit);
