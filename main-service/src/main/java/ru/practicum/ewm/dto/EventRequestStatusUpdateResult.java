@@ -1,7 +1,6 @@
 package ru.practicum.ewm.dto;
 
 import lombok.*;
-import org.apache.catalina.LifecycleState;
 
 import java.util.List;
 

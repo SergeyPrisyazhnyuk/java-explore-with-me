@@ -2,8 +2,6 @@ package ru.practicum.ewm.dto;
 
 import lombok.*;
 
-import javax.persistence.Column;
-
 @Getter
 @Setter
 @NoArgsConstructor

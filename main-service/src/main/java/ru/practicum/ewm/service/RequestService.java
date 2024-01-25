@@ -1,9 +1,6 @@
 package ru.practicum.ewm.service;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
-import ru.practicum.ewm.model.Request;
-
 import java.util.List;
 
 public interface RequestService {

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CompilationServiceImpl implements CompilationService{
+public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
@@ -65,7 +65,8 @@ public class CompilationServiceImpl implements CompilationService{
         compilation.setEvents(eventSet);
 
         Compilation compilationToAdd = compilationRepository.save(compilation);
-        return CompilationMapper.toCompilationDto(compilationToAdd);    }
+        return CompilationMapper.toCompilationDto(compilationToAdd);
+    }
 
     @Override
     @Transactional
