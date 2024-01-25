@@ -169,7 +169,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
 
         User user = checkUtil.checkUserId(userId);
-        Category category = checkUtil.checkCatId(newEventDto.getCategory().getId());
+        Category category = checkUtil.checkCatId(newEventDto.getCategory());
 
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ParameterException("EventDate should be after current date + 2 hours");

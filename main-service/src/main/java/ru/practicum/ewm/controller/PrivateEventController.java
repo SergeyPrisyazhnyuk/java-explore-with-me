@@ -29,7 +29,8 @@ public class PrivateEventController {
 
     @PostMapping
     public EventFullDto addEvent(@PathVariable Long userId,
-                                 @RequestBody @Valid NewEventDto newEventDto) {
+                                 @RequestBody(required = false) @Valid NewEventDto newEventDto) {
+        log.info("Trying to add new event by user");
         log.info("Invoked PrivateEventController.addEvent method with userId={} and newEventDto = {}", userId, newEventDto);
         return eventService.addEvent(userId, newEventDto);
     }

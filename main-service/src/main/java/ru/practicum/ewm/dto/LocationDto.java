@@ -14,13 +14,9 @@ import javax.validation.constraints.NotNull;
 public class LocationDto {
 
     @NotNull
-    @Max(90)
-    @Min(-90)
     private float lat;
 
     @NotNull
-    @Max(90)
-    @Min(-90)
     private float lon;
 
 }

@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.CategoryDto;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -46,9 +48,15 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
 
         Category category = CategoryMapper.toCategoryNew(newCategoryDto);
-        Category categoryToAdd = categoryRepository.save(category);
+        log.info("Category got with name " + category.getName());
 
-        return CategoryMapper.toCategoryDto(categoryToAdd);
+        Category categoryToAdd = categoryRepository.save(category);
+        log.info("Category saved to repo with id " + category.getId());
+
+        CategoryDto categoryDtoFinal = CategoryMapper.toCategoryDto(categoryToAdd);
+        log.info("CategoryDto has id " + category.getId() + " and name = " + category.getName());
+
+        return categoryDtoFinal;
     }
 
     @Override
