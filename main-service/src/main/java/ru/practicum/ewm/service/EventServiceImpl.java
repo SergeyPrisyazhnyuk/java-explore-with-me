@@ -15,6 +15,7 @@ import ru.practicum.ewm.dto.lookupparam.PublicGetEventsParams;
 import ru.practicum.ewm.dto.mapper.EventMapper;
 import ru.practicum.ewm.dto.mapper.LocationMapper;
 import ru.practicum.ewm.dto.mapper.RequestMapper;
+import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.CommonException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ParameterException;
@@ -55,8 +56,10 @@ public class EventServiceImpl implements EventService {
         Specification<Event> specification = Specification.where(null);
 
         // Text
-        if (publicGetEventsParams.getText() != null) {
-            String text = publicGetEventsParams.getText().toLowerCase();
+
+        String eventText = publicGetEventsParams.getText();
+        if (eventText != null) {
+            String text = eventText.toLowerCase();
             specification = specification.and((root, query, cb) ->
                     cb.or(
                             cb.like(cb.lower(root.get("annotation")), "%" + text + "%"),
@@ -77,22 +80,40 @@ public class EventServiceImpl implements EventService {
         }
 
         // RangeStart RangeEnd
-        LocalDateTime rangeEnd = LocalDateTime.parse(publicGetEventsParams.getRangeEnd(), formatter);
-        LocalDateTime rangeStart = LocalDateTime.parse(publicGetEventsParams.getRangeStart(), formatter);
 
-        if (rangeEnd != null && rangeStart != null) {
+        String rangeEndString = publicGetEventsParams.getRangeEnd();
+        String rangeStartString = publicGetEventsParams.getRangeStart();
+
+        log.info("Got rangeEndString = " + rangeEndString);
+        log.info("Got rangeStartString = " + rangeStartString);
+
+        if (rangeEndString != null && rangeStartString != null) {
+            LocalDateTime rangeEnd = LocalDateTime.parse(publicGetEventsParams.getRangeEnd(), formatter);
+            LocalDateTime rangeStart = LocalDateTime.parse(publicGetEventsParams.getRangeStart(), formatter);
             if (rangeEnd.isBefore(rangeStart)) {
-                throw new ParameterException("StartDate is after EndDate");
+                throw new BadRequestException("StartDate is after EndDate");
             }
         }
 
-        specification = specification.and((root, query, cb) ->
-                cb.greaterThan(root.get("eventDate"), Objects.requireNonNullElse(rangeStart, LocalDateTime.now())));
-
-        if (publicGetEventsParams.getRangeEnd() != null) {
-            specification = specification.and((root, query, cb) ->
-                    cb.lessThan(root.get("eventDate"), publicGetEventsParams.getRangeEnd()));
+        LocalDateTime eventDateStartTime;
+        if (rangeStartString == null) {
+            eventDateStartTime = LocalDateTime.now();
+        } else {
+            eventDateStartTime = LocalDateTime.parse(rangeStartString, formatter);
         }
+
+        specification = specification.and((root, query, cb) ->
+                cb.greaterThan(root.get("eventDate"), eventDateStartTime));
+
+        LocalDateTime eventDateEndTime;
+        if (rangeEndString == null) {
+            eventDateEndTime = LocalDateTime.now();
+        } else {
+            eventDateEndTime = LocalDateTime.parse(rangeEndString, formatter);
+        }
+
+        specification = specification.and((root, query, cb) ->
+                cb.lessThan(root.get("eventDate"), eventDateEndTime));
 
         // event status
         specification = specification.and((root, query, cb) ->
@@ -123,8 +144,8 @@ public class EventServiceImpl implements EventService {
 
         for (EventShortDto event : eventShortDtoList) {
 //            Long views = event.getViews();
-              Long views = Long.valueOf(statViews.getOrDefault(event.getId(),0));
-              event.setViews(views);
+            Long views = Long.valueOf(statViews.getOrDefault(event.getId(), 0));
+            event.setViews(views);
         }
 
         return eventShortDtoList;
@@ -146,7 +167,7 @@ public class EventServiceImpl implements EventService {
 
         Map<Long, Integer> statViews = statClientUtil.getStatViewAll(List.of(event));
 
-        Long views = Long.valueOf(statViews.getOrDefault(event.getId(),0));
+        Long views = Long.valueOf(statViews.getOrDefault(event.getId(), 0));
         event.setViews(views);
 
         return eventFullDto;
@@ -176,7 +197,7 @@ public class EventServiceImpl implements EventService {
         Category category = checkUtil.checkCatId(newEventDto.getCategory());
 
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ParameterException("EventDate should be after current date + 2 hours");
+            throw new BadRequestException("EventDate should be after current date + 2 hours");
         }
 
         Event event = EventMapper.toEvent(newEventDto);
@@ -244,7 +265,7 @@ public class EventServiceImpl implements EventService {
         LocalDateTime eventDateNew = updateEventUserRequest.getEventDate();
         if (eventDateNew != null) {
             if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new ParameterException("EventDate should be after current date + 2 hours");
+                throw new BadRequestException("EventDate should be after current date + 2 hours");
             }
             event.setEventDate(eventDateNew);
             changeable = true;
@@ -390,11 +411,9 @@ public class EventServiceImpl implements EventService {
         Specification<Event> specification = Specification.where(null);
 
 
-
         List<Long> userList = adminGetEventsParams.getUsers();
         List<String> stateList = adminGetEventsParams.getStates();
         List<Long> categoryList = adminGetEventsParams.getCategories();
-
 
 
         LocalDateTime rangeEnd = LocalDateTime.parse(adminGetEventsParams.getRangeEnd(), formatter);
@@ -462,6 +481,10 @@ public class EventServiceImpl implements EventService {
 
         }
 
+        if (updateEventAdminRequest.getEventDate() != null && (updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now()) || updateEventAdminRequest.getEventDate().equals(LocalDateTime.now()))) {
+            throw new CommonException("New event date is before or equal current date");
+        }
+
         boolean changeable = false;
 
         String annotationNew = updateEventAdminRequest.getAnnotation();
@@ -479,7 +502,6 @@ public class EventServiceImpl implements EventService {
 
         String descriptionNew = updateEventAdminRequest.getDescription();
         if (descriptionNew != null && !descriptionNew.isBlank()) {
-
             event.setDescription(descriptionNew);
             changeable = true;
         }
@@ -513,10 +535,9 @@ public class EventServiceImpl implements EventService {
             changeable = true;
         }
 
+        if (updateEventAdminRequest.getStateAction() != null) {
 
-        AdminEventState stateAction = AdminEventState.valueOf(updateEventAdminRequest.getStateAction());
-
-        if (stateAction != null) {
+            AdminEventState stateAction = AdminEventState.valueOf(updateEventAdminRequest.getStateAction());
 
             if (stateAction.equals(AdminEventState.PUBLISH_EVENT)) {
                 if (event.getState().equals(EventState.PUBLISHED)) {
@@ -528,7 +549,7 @@ public class EventServiceImpl implements EventService {
                     event.setPublishedOn(LocalDateTime.now());
                     changeable = true;
                 } else {
-                    throw new CommonException("Got Unrnown status");
+                    throw new CommonException("Got Unknown status");
                 }
             }
 
@@ -541,7 +562,7 @@ public class EventServiceImpl implements EventService {
                     event.setState(EventState.CANCELED);
                     changeable = true;
                 } else {
-                    throw new CommonException("Got Unrnown status");
+                    throw new CommonException("Got Unknown status");
                 }
             }
 

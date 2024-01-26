@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS EVENTS (
 	category_id bigint,
 	confirmed_requests integer default 0,
 	created_on timestamp without time zone,
-	description varchar(2000),
+	description varchar(7000),
 	event_date timestamp without time zone,
 	initiator_id bigint,
 	location_id bigint,

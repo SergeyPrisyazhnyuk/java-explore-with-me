@@ -56,7 +56,7 @@ public class RequestServiceImpl implements RequestService {
 
         int participants = event.getParticipantLimit();
         int confirmedRequest = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-        if (participants == confirmedRequest) {
+        if (participants == confirmedRequest && participants != 0) {
             throw new CommonException("Participant limit is reached");
         }
 
@@ -66,7 +66,7 @@ public class RequestServiceImpl implements RequestService {
                 .requester(user)
                 .build();
 
-        if (event.isRequestModeration()) {
+        if (event.isRequestModeration() && participants != 0) {
             request.setStatus(RequestStatus.PENDING);
         } else {
             request.setStatus(RequestStatus.CONFIRMED);
@@ -74,9 +74,7 @@ public class RequestServiceImpl implements RequestService {
 
         requestRepository.save(request);
 
-        ParticipationRequestDto participationRequestDtoResult = RequestMapper.toParticipationRequestDto(request);
-
-        return participationRequestDtoResult;
+        return RequestMapper.toParticipationRequestDto(request);
     }
 
     @Override
