@@ -481,7 +481,7 @@ public class EventServiceImpl implements EventService {
         }
 
         if (updateEventAdminRequest.getEventDate() != null && (updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now()) || updateEventAdminRequest.getEventDate().equals(LocalDateTime.now()))) {
-            throw new CommonException("New event date is before or equal current date");
+            throw new BadRequestException("New event date is before or equal current date");
         }
 
         boolean changeable = false;

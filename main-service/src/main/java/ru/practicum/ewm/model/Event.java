@@ -29,6 +29,7 @@ public class Event {
     private int confirmedRequests;
 
     @Column(name = "created_on")
+    @OneToOne(cascade = CascadeType.ALL)
     private LocalDateTime createdOn;
 
     @Column(name = "description", length = 2000)
