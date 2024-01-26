@@ -219,10 +219,6 @@ public class EventServiceImpl implements EventService {
             throw new CommonException("Event is already PUBLISHED");
         }
 
-        if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ParameterException("EventDate should be after current date + 2 hours");
-        }
-
         boolean changeable = false;
 
         String annotationNew = updateEventUserRequest.getAnnotation();
@@ -247,6 +243,9 @@ public class EventServiceImpl implements EventService {
 
         LocalDateTime eventDateNew = updateEventUserRequest.getEventDate();
         if (eventDateNew != null) {
+            if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new ParameterException("EventDate should be after current date + 2 hours");
+            }
             event.setEventDate(eventDateNew);
             changeable = true;
         }
@@ -390,9 +389,12 @@ public class EventServiceImpl implements EventService {
                 adminGetEventsParams.getSize());
         Specification<Event> specification = Specification.where(null);
 
+
+
         List<Long> userList = adminGetEventsParams.getUsers();
         List<String> stateList = adminGetEventsParams.getStates();
         List<Long> categoryList = adminGetEventsParams.getCategories();
+
 
 
         LocalDateTime rangeEnd = LocalDateTime.parse(adminGetEventsParams.getRangeEnd(), formatter);
@@ -523,6 +525,7 @@ public class EventServiceImpl implements EventService {
                     throw new CommonException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.PUBLISHED);
+                    event.setPublishedOn(LocalDateTime.now());
                     changeable = true;
                 } else {
                     throw new CommonException("Got Unrnown status");
@@ -555,6 +558,10 @@ public class EventServiceImpl implements EventService {
             eventRepository.save(event);
         }
 
-        return EventMapper.toEventFullDto(event);
+        EventFullDto eventFullDtoResult = EventMapper.toEventFullDto(event);
+
+        log.info("Returning EventFullDtoResult = " + eventFullDtoResult);
+
+        return eventFullDtoResult;
     }
 }

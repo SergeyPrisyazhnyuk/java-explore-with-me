@@ -12,9 +12,7 @@ import ru.practicum.ewm.model.Request;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.model.enums.EventState;
 import ru.practicum.ewm.model.enums.RequestStatus;
-import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.RequestRepository;
-import ru.practicum.ewm.repository.UserRepository;
 import ru.practicum.ewm.utility.CheckUtil;
 
 import java.time.LocalDateTime;
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
-    private final EventRepository eventRepository;
-    private final UserRepository userRepository;
     private final CheckUtil checkUtil;
 
     @Override
@@ -78,7 +74,9 @@ public class RequestServiceImpl implements RequestService {
 
         requestRepository.save(request);
 
-        return null;
+        ParticipationRequestDto participationRequestDtoResult = RequestMapper.toParticipationRequestDto(request);
+
+        return participationRequestDtoResult;
     }
 
     @Override

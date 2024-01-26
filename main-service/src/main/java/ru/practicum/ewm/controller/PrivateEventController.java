@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.service.EventService;
+import ru.practicum.ewm.service.EventServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 @Validated
 public class PrivateEventController {
 
-    private final EventService eventService;
+    private final EventServiceImpl eventService;
 
     @GetMapping
     public List<EventFullDto> getEventsByUserId(@PathVariable Long userId,
