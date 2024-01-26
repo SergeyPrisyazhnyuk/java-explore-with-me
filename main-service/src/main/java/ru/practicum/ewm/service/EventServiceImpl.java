@@ -18,7 +18,6 @@ import ru.practicum.ewm.dto.mapper.RequestMapper;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.CommonException;
 import ru.practicum.ewm.exception.NotFoundException;
-import ru.practicum.ewm.exception.ParameterException;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.model.enums.AdminEventState;
 import ru.practicum.ewm.model.enums.EventState;
