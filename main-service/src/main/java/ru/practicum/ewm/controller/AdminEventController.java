@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.EventFullDto;
 import ru.practicum.ewm.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
-import ru.practicum.ewm.service.EventService;
 import ru.practicum.ewm.service.EventServiceImpl;
 
 import javax.validation.Valid;
