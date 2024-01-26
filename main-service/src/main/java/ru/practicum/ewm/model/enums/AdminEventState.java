@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public enum AdminEventState {
 
-    PUBLISH_EVENT, REJECT_EVEN;
+    PUBLISH_EVENT, REJECT_EVENT;
 
     public static Optional<AdminEventState> getAdminEventState(String stateAction) {
 

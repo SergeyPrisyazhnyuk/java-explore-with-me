@@ -18,7 +18,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "annotation", nullable = false, length = 200)
+    @Column(name = "annotation", nullable = false)
     private String annotation;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,7 +31,7 @@ public class Event {
     @Column(name = "created_on")
     private LocalDateTime createdOn;
 
-    @Column(name = "description", length = 2000)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "event_date")
@@ -61,7 +61,7 @@ public class Event {
     @Column(name = "state", nullable = false)
     private EventState state;
 
-    @Column(name = "title", nullable = false, length = 200)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "views")

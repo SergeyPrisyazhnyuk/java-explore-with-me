@@ -2,6 +2,7 @@ package ru.practicum.ewm.dto.lookupparam;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -22,10 +23,10 @@ public class PublicGetEventsParams {
     private Boolean paid;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime rangeStart;
+    private String rangeStart;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime rangeEnd;
+    private String rangeEnd;
 
     private Boolean onlyAvailable = false;
 

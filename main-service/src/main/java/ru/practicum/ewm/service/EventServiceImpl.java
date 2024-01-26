@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,14 +29,13 @@ import ru.practicum.ewm.utility.StatClientUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
@@ -45,6 +45,7 @@ public class EventServiceImpl implements EventService {
     private final CheckUtil checkUtil;
     private final StatClientUtil statClientUtil;
 
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<EventShortDto> getEvents(PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest) {
@@ -76,14 +77,17 @@ public class EventServiceImpl implements EventService {
         }
 
         // RangeStart RangeEnd
-        if (publicGetEventsParams.getRangeEnd() != null && publicGetEventsParams.getRangeStart() != null) {
-            if (publicGetEventsParams.getRangeEnd().isBefore(publicGetEventsParams.getRangeStart())) {
+        LocalDateTime rangeEnd = LocalDateTime.parse(publicGetEventsParams.getRangeEnd(), formatter);
+        LocalDateTime rangeStart = LocalDateTime.parse(publicGetEventsParams.getRangeStart(), formatter);
+
+        if (rangeEnd != null && rangeStart != null) {
+            if (rangeEnd.isBefore(rangeStart)) {
                 throw new ParameterException("StartDate is after EndDate");
             }
         }
 
         specification = specification.and((root, query, cb) ->
-                cb.greaterThan(root.get("eventDate"), Objects.requireNonNullElse(publicGetEventsParams.getRangeStart(), LocalDateTime.now())));
+                cb.greaterThan(root.get("eventDate"), Objects.requireNonNullElse(rangeStart, LocalDateTime.now())));
 
         if (publicGetEventsParams.getRangeEnd() != null) {
             specification = specification.and((root, query, cb) ->
@@ -380,6 +384,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> getEventsByAdmin(AdminGetEventsParams adminGetEventsParams) {
 
+        log.info("Begin reading AdminGetEventsParams - " + adminGetEventsParams.toString());
+
         PageRequest pageable = PageRequest.of(adminGetEventsParams.getFrom() / adminGetEventsParams.getSize(),
                 adminGetEventsParams.getSize());
         Specification<Event> specification = Specification.where(null);
@@ -387,8 +393,10 @@ public class EventServiceImpl implements EventService {
         List<Long> userList = adminGetEventsParams.getUsers();
         List<String> stateList = adminGetEventsParams.getStates();
         List<Long> categoryList = adminGetEventsParams.getCategories();
-        LocalDateTime rangeEnd = adminGetEventsParams.getRangeEnd();
-        LocalDateTime rangeStart = adminGetEventsParams.getRangeStart();
+
+
+        LocalDateTime rangeEnd = LocalDateTime.parse(adminGetEventsParams.getRangeEnd(), formatter);
+        LocalDateTime rangeStart = LocalDateTime.parse(adminGetEventsParams.getRangeStart(), formatter);
 
         if (userList != null && !userList.isEmpty()) {
             specification = specification.and((root, query, criteriaBuilder) ->
@@ -396,7 +404,7 @@ public class EventServiceImpl implements EventService {
         }
         if (stateList != null && !stateList.isEmpty()) {
             specification = specification.and((root, query, criteriaBuilder) ->
-                    root.get("eventStatus").as(String.class).in(stateList));
+                    root.get("state").as(String.class).in(stateList));
         }
         if (categoryList != null && !categoryList.isEmpty()) {
             specification = specification.and((root, query, criteriaBuilder) ->
@@ -503,7 +511,9 @@ public class EventServiceImpl implements EventService {
             changeable = true;
         }
 
-        AdminEventState stateAction = updateEventAdminRequest.getStateAction();
+
+        AdminEventState stateAction = AdminEventState.valueOf(updateEventAdminRequest.getStateAction());
+
         if (stateAction != null) {
 
             if (stateAction.equals(AdminEventState.PUBLISH_EVENT)) {
@@ -513,24 +523,26 @@ public class EventServiceImpl implements EventService {
                     throw new CommonException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.PUBLISHED);
+                    changeable = true;
                 } else {
                     throw new CommonException("Got Unrnown status");
                 }
             }
 
-            if (stateAction.equals(AdminEventState.REJECT_EVEN)) {
+            if (stateAction.equals(AdminEventState.REJECT_EVENT)) {
                 if (event.getState().equals(EventState.PUBLISHED)) {
                     throw new CommonException("Event is already published");
                 } else if (event.getState().equals(EventState.CANCELED)) {
                     throw new CommonException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.CANCELED);
+                    changeable = true;
                 } else {
                     throw new CommonException("Got Unrnown status");
                 }
             }
 
-            changeable = true;
+
         }
 
         String titleNew = updateEventAdminRequest.getTitle();
@@ -543,7 +555,6 @@ public class EventServiceImpl implements EventService {
             eventRepository.save(event);
         }
 
-        return null;
-
+        return EventMapper.toEventFullDto(event);
     }
 }

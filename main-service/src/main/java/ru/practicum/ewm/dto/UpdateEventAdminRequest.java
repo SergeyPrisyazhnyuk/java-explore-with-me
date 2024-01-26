@@ -13,15 +13,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class UpdateEventAdminRequest {
 
-    @NotBlank
+//    @NotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
 
     private Long category;
 
-    @NotBlank
+//    @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
 
@@ -36,9 +37,9 @@ public class UpdateEventAdminRequest {
 
     private Boolean requestModeration;
 
-    private AdminEventState stateAction;
+    private String stateAction;
 
-    @NotBlank
+//    @NotBlank
     @Size(min = 3, max = 120)
     private String title;
 

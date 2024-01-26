@@ -8,6 +8,7 @@ import ru.practicum.ewm.dto.EventFullDto;
 import ru.practicum.ewm.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
 import ru.practicum.ewm.service.EventService;
+import ru.practicum.ewm.service.EventServiceImpl;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 @Validated
 public class AdminEventController {
 
-    private final EventService eventService;
+    private final EventServiceImpl eventService;
 
     @GetMapping
     public List<EventFullDto> getEventsByAdmin(@Valid AdminGetEventsParams adminGetEventsParams) {
@@ -29,7 +30,8 @@ public class AdminEventController {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventByAdmin(@PathVariable Long eventId,
-                                           @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
+                                           @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+        log.info("UpdateEventAdminRequest params = " + updateEventAdminRequest.toString());
         log.info("Invoked AdminEventController.updateEventByAdmin method");
         return eventService.updateEventByAdmin(eventId, updateEventAdminRequest);
     }
