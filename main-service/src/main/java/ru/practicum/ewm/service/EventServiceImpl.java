@@ -55,6 +55,8 @@ public class EventServiceImpl implements EventService {
 
         Specification<Event> specification = Specification.where(null);
 
+        log.info("Event params = " + publicGetEventsParams.toString());
+        
         // Text
 
         String eventText = publicGetEventsParams.getText();
