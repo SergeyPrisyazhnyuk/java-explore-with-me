@@ -122,7 +122,10 @@ public class EventServiceImpl implements EventService {
         String sort = (publicGetEventsParams.getSort() != null && publicGetEventsParams.getSort().equalsIgnoreCase("EVENT_DATE"))
                 ? "eventDate" : "views";
 
-        Pageable pageable = PageRequest.of(publicGetEventsParams.getFrom() / publicGetEventsParams.getSize(), publicGetEventsParams.getSize(), Sort.by(sort).descending());
+        int from = publicGetEventsParams.getFrom() == null ? 0 : publicGetEventsParams.getFrom();
+        int size = publicGetEventsParams.getSize() == null || publicGetEventsParams.getSize() == 0 ? 10 : publicGetEventsParams.getSize();
+
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(sort).descending());
 
         List<Event> eventList = eventRepository.findAll(specification, pageable).getContent();
 
@@ -236,7 +239,7 @@ public class EventServiceImpl implements EventService {
         Event event = checkUtil.checkEventInitiator(eventId, userId);
 
         if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new CommonException("Event is already PUBLISHED");
+            throw new BadRequestException("Event is already PUBLISHED");
         }
 
         boolean changeable = false;
@@ -342,7 +345,7 @@ public class EventServiceImpl implements EventService {
         Integer participantLimit = event.getParticipantLimit();
 
         if (participantLimit.equals(confirmedRequestsCount)) {
-            throw new CommonException("Limit of participants is reached");
+            throw new BadRequestException("Limit of participants is reached");
         }
 
         List<Request> requestList = requestRepository.findAllByIdIn(eventRequestStatusUpdateRequest.getRequestIds());
@@ -351,22 +354,14 @@ public class EventServiceImpl implements EventService {
         for (Request request : requestList) {
             if (participantLimit == 0) {
                 request.setStatus(RequestStatus.CONFIRMED);
-                if (event.getConfirmedRequests() != 0) {
-                    event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-                } else {
-                    event.setConfirmedRequests(1);
-                }
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             } else {
                 if (request.getEvent().getId().equals(event.getId())) {
                     if (event.getInitiator().equals(user)) {
                         if (request.getStatus().equals(RequestStatus.PENDING)) {
                             request.setStatus(eventRequestStatusUpdateRequest.getStatus());
                             if (request.getStatus().equals(RequestStatus.CONFIRMED)) {
-                                if (event.getConfirmedRequests() != 0) {
-                                    event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-                                } else {
-                                    event.setConfirmedRequests(1);
-                                }
+                                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
                             }
                         } else {
                             throw new CommonException("Can't update request if it is not pending");
@@ -415,8 +410,21 @@ public class EventServiceImpl implements EventService {
         List<Long> categoryList = adminGetEventsParams.getCategories();
 
 
-        LocalDateTime rangeEnd = LocalDateTime.parse(adminGetEventsParams.getRangeEnd(), formatter);
-        LocalDateTime rangeStart = LocalDateTime.parse(adminGetEventsParams.getRangeStart(), formatter);
+        LocalDateTime rangeEnd;
+        if (adminGetEventsParams.getRangeEnd() != null) {
+            rangeEnd = LocalDateTime.parse(adminGetEventsParams.getRangeEnd(), formatter);
+        } else {
+            rangeEnd = null;
+        }
+
+
+        LocalDateTime rangeStart;
+        if (adminGetEventsParams.getRangeStart() != null) {
+            rangeStart = LocalDateTime.parse(adminGetEventsParams.getRangeStart(), formatter);
+        } else {
+            rangeStart = null;
+        }
+
 
         if (userList != null && !userList.isEmpty()) {
             specification = specification.and((root, query, criteriaBuilder) ->
@@ -540,9 +548,9 @@ public class EventServiceImpl implements EventService {
 
             if (stateAction.equals(AdminEventState.PUBLISH_EVENT)) {
                 if (event.getState().equals(EventState.PUBLISHED)) {
-                    throw new CommonException("Event is already published");
+                    throw new BadRequestException("Event is already published");
                 } else if (event.getState().equals(EventState.CANCELED)) {
-                    throw new CommonException("Event is already canceled");
+                    throw new BadRequestException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
@@ -554,9 +562,9 @@ public class EventServiceImpl implements EventService {
 
             if (stateAction.equals(AdminEventState.REJECT_EVENT)) {
                 if (event.getState().equals(EventState.PUBLISHED)) {
-                    throw new CommonException("Event is already published");
+                    throw new BadRequestException("Event is already published");
                 } else if (event.getState().equals(EventState.CANCELED)) {
-                    throw new CommonException("Event is already canceled");
+                    throw new BadRequestException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.CANCELED);
                     changeable = true;

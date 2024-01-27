@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
 import ru.practicum.ewm.dto.mapper.RequestMapper;
+import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.CommonException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ParameterException;
@@ -43,21 +44,21 @@ public class RequestServiceImpl implements RequestService {
 
 
         if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
-            throw new CommonException("Request already exists");
+            throw new BadRequestException("Request already exists");
         }
 
         if (event.getInitiator().getId().equals(userId)) {
-            throw new CommonException("You can't request to participate in your own event");
+            throw new BadRequestException("You can't request to participate in your own event");
         }
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new CommonException("Event with id=" + eventId + " was not found");
+            throw new BadRequestException("Event with id=" + eventId + " was not found");
         }
 
         int participants = event.getParticipantLimit();
         int confirmedRequest = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         if (participants == confirmedRequest && participants != 0) {
-            throw new CommonException("Participant limit is reached");
+            throw new BadRequestException("Participant limit is reached");
         }
 
         Request request = Request.builder()

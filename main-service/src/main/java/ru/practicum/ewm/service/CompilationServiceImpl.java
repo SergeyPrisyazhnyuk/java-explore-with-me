@@ -47,8 +47,8 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getCompilationById(Long compId) {
-
-        return CompilationMapper.toCompilationDto(checkUtil.checkCompId(compId));
+        Compilation compilation = checkUtil.checkCompId(compId);
+        return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override

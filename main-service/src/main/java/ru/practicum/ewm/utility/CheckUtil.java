@@ -3,6 +3,7 @@ package ru.practicum.ewm.utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.exception.AlreadyExistsException;
+import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.Compilation;
@@ -50,7 +51,7 @@ public class CheckUtil {
 
     public void checkUniqNameCategory(String name) {
         if (categoryRepository.existsByNameIgnoreCase(name)) {
-            throw new AlreadyExistsException(("Category already exists: " + name));
+            throw new BadRequestException(("Category already exists: " + name));
         }
     }
 

@@ -47,6 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
 
+        checkUtil.checkUniqNameCategory(newCategoryDto.getName());
+
         Category category = CategoryMapper.toCategoryNew(newCategoryDto);
         log.info("Category got with name " + category.getName());
 
@@ -65,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<Event> events = eventRepository.findByCategory(category);
 
-        if (events.isEmpty()) {
+        if (!events.isEmpty()) {
             throw new RuntimeException("Category can't be deleted cause it's being used in other events");
         }
 
