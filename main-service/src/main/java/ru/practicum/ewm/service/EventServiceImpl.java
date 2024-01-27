@@ -268,7 +268,7 @@ public class EventServiceImpl implements EventService {
         LocalDateTime eventDateNew = updateEventUserRequest.getEventDate();
         if (eventDateNew != null) {
             if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new ConflictException("EventDate should be after current date + 2 hours");
+                throw new BadRequestException("EventDate should be after current date + 2 hours");
             }
             event.setEventDate(eventDateNew);
             changeable = true;
