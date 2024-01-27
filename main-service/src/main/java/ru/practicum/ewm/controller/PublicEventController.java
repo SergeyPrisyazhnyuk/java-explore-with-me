@@ -10,6 +10,7 @@ import ru.practicum.ewm.dto.lookupparam.PublicGetEventsParams;
 import ru.practicum.ewm.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,7 +23,7 @@ public class PublicEventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventShortDto> getEvents(PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest) {
+    public List<EventShortDto> getEvents(@Valid PublicGetEventsParams publicGetEventsParams, HttpServletRequest httpServletRequest) {
         log.info("Invoked PublicEventController.getEvents method");
         return eventService.getEvents(publicGetEventsParams, httpServletRequest);
     }
