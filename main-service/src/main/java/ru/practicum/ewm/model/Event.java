@@ -1,7 +1,6 @@
 package ru.practicum.ewm.model;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import ru.practicum.ewm.model.enums.EventState;
 
 import javax.persistence.*;
