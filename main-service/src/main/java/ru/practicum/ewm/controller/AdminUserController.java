@@ -25,7 +25,7 @@ public class AdminUserController {
     public List<UserDto> getUsers(@RequestParam(required = false) List<Long> userIds,
                                   @RequestParam(defaultValue = "0") Integer from,
                                   @RequestParam(defaultValue = "10")Integer size) {
-        log.info("Invoked AdminUserController.getUsers method");
+        log.info("Invoked AdminUserController.getUsers method with from = {}, size = {} and uids = {}", from, size, userIds);
         return userService.getUsers(userIds, from, size);
     }
 

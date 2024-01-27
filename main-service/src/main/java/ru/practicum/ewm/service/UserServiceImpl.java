@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
         } else {
           userDto = userRepository.findAll(pageRequest).stream()
                   .map(UserMapper::toUserDto)
+                  .limit(1)
                   .collect(Collectors.toList());
         }
 
