@@ -128,6 +128,7 @@ public class EventServiceImpl implements EventService {
 
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(sort).descending());
 
+
         List<Event> eventList = eventRepository.findAll(specification, pageable).getContent();
 
         List<EventShortDto> eventShortDtoList = new ArrayList<>();
@@ -171,7 +172,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Integer> statViews = statClientUtil.getStatViewAll(List.of(event));
 
         Long views = Long.valueOf(statViews.getOrDefault(event.getId(), 0));
-        event.setViews(views);
+        eventFullDto.setViews(views);
 
         return eventFullDto;
     }
