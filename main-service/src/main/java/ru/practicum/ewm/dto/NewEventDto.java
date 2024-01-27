@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @Getter
@@ -37,11 +38,14 @@ public class NewEventDto {
     @Valid
     private LocationDto location;
 
-    private boolean paid;
+    @NotNull
+    private boolean paid = false;
 
-    private Integer participantLimit;
+    @PositiveOrZero
+    private int participantLimit = 0;
 
-    private boolean requestModeration;
+    @NotNull
+    private boolean requestModeration = true;
 
     @NotNull
     @Length(min = 3, max = 120)

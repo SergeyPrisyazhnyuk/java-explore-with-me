@@ -16,7 +16,6 @@ public class EventMapper {
     public Event toEvent(NewEventDto newEventDto) {
 
         return Event.builder()
-                .id(null)
                 .annotation(newEventDto.getAnnotation())
                 .description(newEventDto.getDescription())
                 .eventDate(newEventDto.getEventDate())

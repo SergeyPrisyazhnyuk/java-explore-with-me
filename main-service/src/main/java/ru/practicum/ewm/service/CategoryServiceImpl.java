@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.dto.NewCategoryDto;
 import ru.practicum.ewm.dto.mapper.CategoryMapper;
+import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.repository.CategoryRepository;
@@ -68,7 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Event> events = eventRepository.findByCategory(category);
 
         if (!events.isEmpty()) {
-            throw new RuntimeException("Category can't be deleted cause it's being used in other events");
+            throw new ConflictException("Category can't be deleted cause it's being used in other events");
         }
 
         categoryRepository.deleteById(catId);

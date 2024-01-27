@@ -44,6 +44,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto addUser(NewUserRequest newUserRequest) {
+
+        checkUtil.checkUniqueNameUser(newUserRequest.getName());
+
         User user = userRepository.save(UserMapper.toUser(newUserRequest));
         return UserMapper.toUserDto(user);
     }

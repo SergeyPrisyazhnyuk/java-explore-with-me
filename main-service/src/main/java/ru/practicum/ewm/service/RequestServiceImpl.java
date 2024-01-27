@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
 import ru.practicum.ewm.dto.mapper.RequestMapper;
 import ru.practicum.ewm.exception.BadRequestException;
+import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.ParameterException;
 import ru.practicum.ewm.model.Event;
@@ -43,21 +44,21 @@ public class RequestServiceImpl implements RequestService {
 
 
         if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
-            throw new BadRequestException("Request already exists");
+            throw new ConflictException("Request already exists");
         }
 
         if (event.getInitiator().getId().equals(userId)) {
-            throw new BadRequestException("You can't request to participate in your own event");
+            throw new ConflictException("You can't request to participate in your own event");
         }
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new BadRequestException("Event with id=" + eventId + " was not found");
+            throw new ConflictException("Event with id=" + eventId + " was not found");
         }
 
         int participants = event.getParticipantLimit();
         int confirmedRequest = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         if (participants == confirmedRequest && participants != 0) {
-            throw new BadRequestException("Participant limit is reached");
+            throw new ConflictException("Participant limit is reached");
         }
 
         Request request = Request.builder()

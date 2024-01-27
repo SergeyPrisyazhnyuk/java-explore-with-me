@@ -17,6 +17,7 @@ import ru.practicum.ewm.dto.mapper.LocationMapper;
 import ru.practicum.ewm.dto.mapper.RequestMapper;
 import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.exception.CommonException;
+import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.model.enums.AdminEventState;
@@ -239,7 +240,7 @@ public class EventServiceImpl implements EventService {
         Event event = checkUtil.checkEventInitiator(eventId, userId);
 
         if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new BadRequestException("Event is already PUBLISHED");
+            throw new ConflictException("Event is already PUBLISHED");
         }
 
         boolean changeable = false;
@@ -267,7 +268,7 @@ public class EventServiceImpl implements EventService {
         LocalDateTime eventDateNew = updateEventUserRequest.getEventDate();
         if (eventDateNew != null) {
             if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new BadRequestException("EventDate should be after current date + 2 hours");
+                throw new ConflictException("EventDate should be after current date + 2 hours");
             }
             event.setEventDate(eventDateNew);
             changeable = true;
@@ -338,14 +339,14 @@ public class EventServiceImpl implements EventService {
         Event event = checkUtil.checkEventInitiator(eventId, userId);
 
         if (!event.isRequestModeration() || event.getParticipantLimit() == 0) {
-            throw new CommonException("This event doesn't need approve");
+            throw new ConflictException("This event doesn't need approve");
         }
 
         Integer confirmedRequestsCount = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
         Integer participantLimit = event.getParticipantLimit();
 
         if (participantLimit.equals(confirmedRequestsCount)) {
-            throw new BadRequestException("Limit of participants is reached");
+            throw new ConflictException("Limit of participants is reached");
         }
 
         List<Request> requestList = requestRepository.findAllByIdIn(eventRequestStatusUpdateRequest.getRequestIds());
@@ -548,9 +549,9 @@ public class EventServiceImpl implements EventService {
 
             if (stateAction.equals(AdminEventState.PUBLISH_EVENT)) {
                 if (event.getState().equals(EventState.PUBLISHED)) {
-                    throw new BadRequestException("Event is already published");
+                    throw new ConflictException("Event is already published");
                 } else if (event.getState().equals(EventState.CANCELED)) {
-                    throw new BadRequestException("Event is already canceled");
+                    throw new ConflictException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
@@ -562,9 +563,9 @@ public class EventServiceImpl implements EventService {
 
             if (stateAction.equals(AdminEventState.REJECT_EVENT)) {
                 if (event.getState().equals(EventState.PUBLISHED)) {
-                    throw new BadRequestException("Event is already published");
+                    throw new ConflictException("Event is already published");
                 } else if (event.getState().equals(EventState.CANCELED)) {
-                    throw new BadRequestException("Event is already canceled");
+                    throw new ConflictException("Event is already canceled");
                 } else if (event.getState().equals(EventState.PENDING)) {
                     event.setState(EventState.CANCELED);
                     changeable = true;

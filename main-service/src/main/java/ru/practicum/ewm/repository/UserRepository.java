@@ -9,4 +9,6 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByIdIn(List<Long> userIds, PageRequest pageRequest);
+
+    User findByName(String name);
 }
