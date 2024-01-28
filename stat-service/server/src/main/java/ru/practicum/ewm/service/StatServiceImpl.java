@@ -25,7 +25,7 @@ public class StatServiceImpl implements StatService {
     public List<ViewStats> getViewStats(StatRequest statRequest) {
 
         if (statRequest.getEnd().isBefore(statRequest.getStart())) {
-            throw new BadRequestException("End date can't be before dtart date!");
+            throw new BadRequestException("End date can't be before start date");
         }
 
         if (statRequest.isUnique()) {
