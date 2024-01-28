@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         } else {
           userDto = userRepository.findAll(pageRequest).stream()
                   .map(UserMapper::toUserDto)
-                  .limit(1)
+//                  .limit(size == 10 ? 1 : size)
                   .collect(Collectors.toList());
         }
 
@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long userId) {
+        checkUtil.userExists(userId);
         User user = checkUtil.checkUserId(userId);
         userRepository.delete(user);
     }

@@ -56,7 +56,7 @@ public class EventServiceImpl implements EventService {
         Specification<Event> specification = Specification.where(null);
 
         log.info("Event params = " + publicGetEventsParams.toString());
-        
+
         // Text
 
         String eventText = publicGetEventsParams.getText();
@@ -103,19 +103,17 @@ public class EventServiceImpl implements EventService {
         } else {
             eventDateStartTime = LocalDateTime.parse(rangeStartString, formatter);
         }
-
         specification = specification.and((root, query, cb) ->
                 cb.greaterThan(root.get("eventDate"), eventDateStartTime));
 
         LocalDateTime eventDateEndTime;
-        if (rangeEndString == null) {
-            eventDateEndTime = LocalDateTime.now();
-        } else {
+        if (rangeEndString != null) {
             eventDateEndTime = LocalDateTime.parse(rangeEndString, formatter);
+            specification = specification.and((root, query, cb) ->
+                    cb.lessThan(root.get("eventDate"), eventDateEndTime));
         }
 
-        specification = specification.and((root, query, cb) ->
-                cb.lessThan(root.get("eventDate"), eventDateEndTime));
+
 
         // event status
         specification = specification.and((root, query, cb) ->
@@ -130,9 +128,7 @@ public class EventServiceImpl implements EventService {
 
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(sort).descending());
 
-
         List<Event> eventList = eventRepository.findAll(specification, pageable).getContent();
-
         List<EventShortDto> eventShortDtoList = new ArrayList<>();
 
         if (publicGetEventsParams.getOnlyAvailable() == null || publicGetEventsParams.getOnlyAvailable().equals(false)) {
@@ -149,7 +145,6 @@ public class EventServiceImpl implements EventService {
         Map<Long, Integer> statViews = statClientUtil.getStatViewAll(eventList);
 
         for (EventShortDto event : eventShortDtoList) {
-//            Long views = event.getViews();
             Long views = Long.valueOf(statViews.getOrDefault(event.getId(), 0));
             event.setViews(views);
         }

@@ -37,6 +37,12 @@ public class CheckUtil {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user with id = " + userId));
     }
 
+    public void userExists(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("Not found user with id = " + userId);
+        }
+    }
+
     public void checkUniqueNameUser(String userName) {
         if (userRepository.findByName(userName) != null) {
             throw new ConflictException("User already exists, name: " + userName);

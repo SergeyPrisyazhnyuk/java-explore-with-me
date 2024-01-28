@@ -22,11 +22,11 @@ public class AdminUserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> userIds,
+    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
                                   @RequestParam(defaultValue = "0") Integer from,
                                   @RequestParam(defaultValue = "10")Integer size) {
-        log.info("Invoked AdminUserController.getUsers method with from = {}, size = {} and uids = {}", from, size, userIds);
-        return userService.getUsers(userIds, from, size);
+        log.info("Invoked AdminUserController.getUsers method with from = {}, size = {} and uids = {}", from, size, ids);
+        return userService.getUsers(ids, from, size);
     }
 
     @PostMapping

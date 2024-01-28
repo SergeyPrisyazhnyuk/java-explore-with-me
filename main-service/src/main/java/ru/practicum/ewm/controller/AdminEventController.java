@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.EventFullDto;
 import ru.practicum.ewm.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
-import ru.practicum.ewm.service.EventServiceImpl;
+import ru.practicum.ewm.service.EventService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 @Validated
 public class AdminEventController {
 
-    private final EventServiceImpl eventService;
+    private final EventService eventService;
 
     @GetMapping
     public List<EventFullDto> getEventsByAdmin(@Valid AdminGetEventsParams adminGetEventsParams) {
