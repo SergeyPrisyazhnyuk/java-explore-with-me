@@ -1,7 +1,13 @@
 package ru.practicum.ewm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.ewm.model.Location;
+import ru.practicum.ewm.dto.CommentDtoText;
+import ru.practicum.ewm.model.Comment;
 
-public interface CommentRepository extends JpaRepository<Location, Long> {
+import java.util.List;
+
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+    List<Comment> findAllByEventId(Long eventId);
+
 }

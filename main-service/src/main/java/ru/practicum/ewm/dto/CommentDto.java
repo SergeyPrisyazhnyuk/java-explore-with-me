@@ -2,7 +2,6 @@ package ru.practicum.ewm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 

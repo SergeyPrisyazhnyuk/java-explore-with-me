@@ -13,12 +13,12 @@ public interface CommentService {
 
     CommentDto addComment(Long userId, Long eventId, CommentDtoText commentDtoText);
 
-    CommentDto updateComment(Long userId, Long eventId, Long comId);
+    CommentDto updateComment(Long userId, Long eventId, Long comId, CommentDtoText commentDtoText);
 
     void deleteCommentByUser(Long userId, Long eventId, Long comId);
 
-    List<CommentDto> getAllCommentsByAdmin(Long userId, Long eventId);
+    List<CommentDto> getAllCommentsByAdmin(Long eventId);
 
-    void deleteCommentByAdmin(Long userId, Long eventId, Long comId);
+    void deleteCommentByAdmin(Long eventId, Long comId);
 
 }
