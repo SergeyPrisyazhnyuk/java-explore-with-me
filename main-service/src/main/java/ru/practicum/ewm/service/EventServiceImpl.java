@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.dto.lookupparam.AdminGetEventsParams;
 import ru.practicum.ewm.dto.lookupparam.PublicGetEventsParams;
@@ -192,6 +193,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
 
         User user = checkUtil.checkUserId(userId);
@@ -232,6 +234,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventByUserIdAndEventId(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
 
         checkUtil.checkUserId(userId);
@@ -331,6 +334,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult updateEventRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
 
         User user = checkUtil.checkUserId(userId);
@@ -469,6 +473,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
 
         Event event = checkUtil.checkEventId(eventId);

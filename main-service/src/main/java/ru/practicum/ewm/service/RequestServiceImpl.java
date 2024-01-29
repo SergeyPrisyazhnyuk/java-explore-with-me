@@ -2,6 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
 import ru.practicum.ewm.dto.mapper.RequestMapper;
 import ru.practicum.ewm.exception.ConflictException;
@@ -36,6 +37,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
 
         User user = checkUtil.checkUserId(userId);
@@ -78,6 +80,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
 
         checkUtil.checkUserId(userId);

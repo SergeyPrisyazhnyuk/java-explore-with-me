@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.dto.NewCategoryDto;
 import ru.practicum.ewm.dto.mapper.CategoryMapper;
@@ -42,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         checkUtil.checkUniqNameCategory(newCategoryDto.getName());
 
@@ -58,6 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategoryById(Long catId) {
         Category category = checkUtil.checkCatId(catId);
 
@@ -72,6 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
         Category category = checkUtil.checkCatId(catId);
 
