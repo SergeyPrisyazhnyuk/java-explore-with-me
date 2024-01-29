@@ -34,7 +34,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         List<Compilation> compilations = new ArrayList<>();
 
-        compilations = compilationRepository.findAllByPinnedOrNot(pinned, pageRequest);
+        compilations = compilationRepository.findAllByPinned(pinned, pageRequest);
 
         return compilations.stream()
                 .map(CompilationMapper::toCompilationDto)
