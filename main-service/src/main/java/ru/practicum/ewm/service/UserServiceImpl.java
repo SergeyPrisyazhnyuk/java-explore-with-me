@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public UserDto addUser(NewUserRequest newUserRequest) {
 
         checkUtil.checkUniqueNameUser(newUserRequest.getName());
