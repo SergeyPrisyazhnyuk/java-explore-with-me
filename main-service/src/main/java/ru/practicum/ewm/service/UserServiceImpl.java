@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private final CheckUtil checkUtil;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getUsers(List<Long> userIds, Integer from, Integer size) {
 
         PageRequest pageRequest = PageRequest.of(from / size, size);
@@ -35,7 +36,6 @@ public class UserServiceImpl implements UserService {
         } else {
           userDto = userRepository.findAll(pageRequest).stream()
                   .map(UserMapper::toUserDto)
-//                  .limit(size == 10 ? 1 : size)
                   .collect(Collectors.toList());
         }
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDto addUser(NewUserRequest newUserRequest) {
 
         checkUtil.checkUniqueNameUser(newUserRequest.getName());

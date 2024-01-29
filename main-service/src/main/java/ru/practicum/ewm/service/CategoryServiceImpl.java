@@ -26,11 +26,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final EventRepository eventRepository;
     private final CheckUtil checkUtil;
 
-
-
     @Override
     public List<CategoryDto> getCategories(Integer from, Integer size) {
-
         PageRequest pageRequest = PageRequest.of(from / size, size);
 
         return categoryRepository.findAll(pageRequest)
@@ -39,7 +36,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(Long catId) {
-
         Category category = checkUtil.checkCatId(catId);
 
         return CategoryMapper.toCategoryDto(category);
@@ -47,7 +43,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-
         checkUtil.checkUniqNameCategory(newCategoryDto.getName());
 
         Category category = CategoryMapper.toCategoryNew(newCategoryDto);
@@ -78,7 +73,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
-
         Category category = checkUtil.checkCatId(catId);
 
         String categoryNewName = categoryDto.getName();

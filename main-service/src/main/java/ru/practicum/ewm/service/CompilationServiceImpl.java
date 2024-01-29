@@ -84,7 +84,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         Set<Long> eventIds = updateCompilationRequest.getEvents();
 
-        if (eventIds != null) {
+        if (eventIds != null && !eventIds.isEmpty()) {
             List<Event> events = eventRepository.findAllByIdIn(new ArrayList<>(eventIds));
             Set<Event> eventSet = new HashSet<>(events);
             compilation.setEvents(eventSet);
