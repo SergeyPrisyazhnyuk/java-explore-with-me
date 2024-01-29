@@ -7,8 +7,6 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.repository.*;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class CheckUtil {
