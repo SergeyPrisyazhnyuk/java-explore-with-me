@@ -1,9 +1,6 @@
 package ru.practicum.ewm.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.ewm.model.enums.EventState;
 
 import javax.persistence.*;
@@ -14,13 +11,14 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "annotation", nullable = false, length = 200)
+    @Column(name = "annotation", nullable = false, length = 2000)
     private String annotation;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +29,7 @@ public class Event {
     private int confirmedRequests;
 
     @Column(name = "created_on")
+//    @OneToOne(cascade = CascadeType.ALL)
     private LocalDateTime createdOn;
 
     @Column(name = "description", length = 2000)
@@ -43,8 +42,11 @@ public class Event {
     @JoinColumn(name = "initiator_id")
     private User initiator;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @Cascade(CascadeType.SAVE_UPDATE)
+//    @JoinColumn(name = "location_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
 
     @Column(name = "paid")
@@ -63,10 +65,10 @@ public class Event {
     @Column(name = "state", nullable = false)
     private EventState state;
 
-    @Column(name = "title", nullable = false, length = 200)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "views")
-    private int views;
+    private Long views;
 
 }

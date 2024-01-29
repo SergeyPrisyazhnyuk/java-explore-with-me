@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.EndpointHit;
 import ru.practicum.ewm.StatRequest;
 import ru.practicum.ewm.ViewStats;
+import ru.practicum.ewm.exception.BadRequestException;
 import ru.practicum.ewm.repository.StatRepository;
 
 import java.util.List;
@@ -22,6 +23,10 @@ public class StatServiceImpl implements StatService {
 
     @Override
     public List<ViewStats> getViewStats(StatRequest statRequest) {
+
+        if (statRequest.getEnd().isBefore(statRequest.getStart())) {
+            throw new BadRequestException("End date can't be before start date");
+        }
 
         if (statRequest.isUnique()) {
             return statRepository.getViewStatsUnique(statRequest);
