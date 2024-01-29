@@ -19,7 +19,6 @@ public class CheckUtil {
     private final CommentRepository commentRepository;
 
     public Category checkCatId(Long catId) {
-
         return categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Not found category with id = " + catId));
     }
 
