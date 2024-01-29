@@ -7,6 +7,8 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.repository.*;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class CheckUtil {
@@ -15,6 +17,7 @@ public class CheckUtil {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CompilationRepository compilationRepository;
+    private final RequestRepository requestRepository;
     private final CommentRepository commentRepository;
 
     public Category checkCatId(Long catId) {
@@ -62,6 +65,10 @@ public class CheckUtil {
 
     public Comment checkCommentId(Long comId) {
         return commentRepository.findById(comId).orElseThrow(() -> new NotFoundException("Not found commentary with id = " + comId));
+    }
+
+    public Request checkRequestEventAndRequester(Long eventId, Long userId) {
+        return requestRepository.findByEventIdAndRequesterId(eventId, userId).orElseThrow(() -> new NotFoundException("Not found request with eventId = " + eventId + " and requestId = " + userId));
     }
 
 }
