@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CheckUtil checkUtil;
-    private final EventRepository eventRepository;
     private final CommentRepository commentRepository;
 
 
@@ -64,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
             throw new CommonException("Initiator can't add, update or delete commentaries");
         }
 
-        if (!event.getState().equals(EventState.FINISHED)) {
+        if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new CommonException("Event is not finished");
         }
 
@@ -148,9 +147,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteCommentByAdmin(Long eventId, Long comId) {
+    public void deleteCommentByAdmin(Long comId) {
 
-        checkUtil.checkEventId(eventId);
         checkUtil.checkCommentId(comId);
 
         commentRepository.deleteById(comId);

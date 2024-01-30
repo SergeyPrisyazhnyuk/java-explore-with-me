@@ -2,6 +2,7 @@ package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.CommentDto;
@@ -18,16 +19,17 @@ public class AdminCommentController {
 
     private final CommentService commentService;
 
-    @GetMapping
-    public List<CommentDto> getAllCommentsByAdmin(@RequestParam Long eventId) {
+    @GetMapping("/{eventId}")
+    public List<CommentDto> getAllCommentsByAdmin(@PathVariable Long eventId) {
         log.info("Invoked AdminCommentController.getAllCommentsByAdmin method with eventId = {}", eventId);
         return commentService.getAllCommentsByAdmin(eventId);
     }
 
-    @DeleteMapping("/{eventId}")
-    public void deleteCommentByAdmin(@RequestParam Long eventId, @PathVariable Long comId) {
-        log.info("Invoked AdminCommentController.deleteCommentByAdmin method with eventId = {} and comId = {}", eventId, comId);
-        commentService.deleteCommentByAdmin(eventId, comId);
+    @DeleteMapping("/{comId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCommentByAdmin(@PathVariable Long comId) {
+        log.info("Invoked AdminCommentController.deleteCommentByAdmin method with  comId = {}", comId);
+        commentService.deleteCommentByAdmin(comId);
     }
 
 }
