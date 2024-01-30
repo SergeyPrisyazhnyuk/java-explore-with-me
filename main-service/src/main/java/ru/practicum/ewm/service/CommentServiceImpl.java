@@ -14,7 +14,6 @@ import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.model.enums.EventState;
 import ru.practicum.ewm.model.enums.RequestStatus;
 import ru.practicum.ewm.repository.CommentRepository;
-import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.utility.CheckUtil;
 
 import java.time.LocalDateTime;
