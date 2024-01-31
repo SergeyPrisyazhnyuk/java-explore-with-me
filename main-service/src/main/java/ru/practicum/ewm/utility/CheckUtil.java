@@ -4,14 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
-import ru.practicum.ewm.model.Category;
-import ru.practicum.ewm.model.Compilation;
-import ru.practicum.ewm.model.Event;
-import ru.practicum.ewm.model.User;
-import ru.practicum.ewm.repository.CategoryRepository;
-import ru.practicum.ewm.repository.CompilationRepository;
-import ru.practicum.ewm.repository.EventRepository;
-import ru.practicum.ewm.repository.UserRepository;
+import ru.practicum.ewm.model.*;
+import ru.practicum.ewm.repository.*;
 
 @Component
 @RequiredArgsConstructor
@@ -21,9 +15,10 @@ public class CheckUtil {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CompilationRepository compilationRepository;
+    private final RequestRepository requestRepository;
+    private final CommentRepository commentRepository;
 
     public Category checkCatId(Long catId) {
-
         return categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Not found category with id = " + catId));
     }
 
@@ -63,6 +58,14 @@ public class CheckUtil {
         if (categoryRepository.existsByNameIgnoreCase(name)) {
             throw new ConflictException("Category already exists: " + name);
         }
+    }
+
+    public Comment checkCommentId(Long comId) {
+        return commentRepository.findById(comId).orElseThrow(() -> new NotFoundException("Not found commentary with id = " + comId));
+    }
+
+    public Request checkRequestEventAndRequester(Long eventId, Long userId) {
+        return requestRepository.findByEventIdAndRequesterId(eventId, userId).orElseThrow(() -> new NotFoundException("Not found request with eventId = " + eventId + " and requestId = " + userId));
     }
 
 }

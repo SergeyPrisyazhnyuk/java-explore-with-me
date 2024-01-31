@@ -42,9 +42,6 @@ public class Event {
     @JoinColumn(name = "initiator_id")
     private User initiator;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @Cascade(CascadeType.SAVE_UPDATE)
-//    @JoinColumn(name = "location_id")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
