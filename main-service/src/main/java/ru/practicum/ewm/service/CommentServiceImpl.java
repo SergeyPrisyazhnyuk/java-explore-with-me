@@ -34,31 +34,28 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDtoText> getAllComments(Long eventId, Integer from, Integer size) {
-
         checkUtil.checkEventId(eventId);
-        Pageable pageable = PageRequest.of(from / size, size);
-        List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
 
+        Pageable pageable = PageRequest.of(from / size, size);
+
+        List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
         return commentList.stream().map(CommentMapper::toCommentDtoText).collect(Collectors.toList());
     }
 
     @Override
     public List<CommentDto> getAllCommentsByUser(Long userId, Long eventId, Integer from, Integer size) {
-
         checkUtil.userExists(userId);
         checkUtil.checkEventId(eventId);
 
         Pageable pageable = PageRequest.of(from / size, size);
 
         List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
-
         return commentList.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public CommentDto addComment(Long userId, Long eventId, CommentDtoText commentDtoText) {
-
         User user = checkUtil.checkUserId(userId);
         Event event = checkUtil.checkEventId(eventId);
 
@@ -91,7 +88,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto updateComment(Long userId, Long eventId, Long comId, CommentDtoText commentDtoText) {
-
         checkUtil.checkUserId(userId);
         Event event = checkUtil.checkEventId(eventId);
 
@@ -120,7 +116,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteCommentByUser(Long userId, Long eventId, Long comId) {
-
         checkUtil.checkUserId(userId);
         Event event = checkUtil.checkEventId(eventId);
 
@@ -140,7 +135,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getAllCommentsByAdmin(Long eventId, Integer from, Integer size) {
-
         checkUtil.checkEventId(eventId);
         Pageable pageable = PageRequest.of(from / size, size);
         List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
@@ -151,7 +145,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteCommentByAdmin(Long comId) {
-
         checkUtil.checkCommentId(comId);
 
         commentRepository.deleteById(comId);
