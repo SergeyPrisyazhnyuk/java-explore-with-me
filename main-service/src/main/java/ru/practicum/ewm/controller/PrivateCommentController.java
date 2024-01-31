@@ -22,9 +22,11 @@ public class PrivateCommentController {
 
     @GetMapping
     public List<CommentDto> getAllCommentsByUser(@PathVariable Long userId,
-                                                 @PathVariable Long eventId) {
+                                                 @PathVariable Long eventId,
+                                                 @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                                 @RequestParam(value = "size", defaultValue = "10") Integer size) {
         log.info("Invoked PrivateCommentController.getAllCommentsByUser method with userId = {} and eventId = {}", userId, eventId);
-        return commentService.getAllCommentsByUser(userId, eventId);
+        return commentService.getAllCommentsByUser(userId, eventId, from, size);
     }
 
     @PostMapping

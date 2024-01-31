@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<CommentDtoText> getAllComments(Long eventId);
+    List<CommentDtoText> getAllComments(Long eventId, Integer from, Integer size);
 
-    List<CommentDto> getAllCommentsByUser(Long userId, Long eventId);
+    List<CommentDto> getAllCommentsByUser(Long userId, Long eventId, Integer from, Integer size);
 
     CommentDto addComment(Long userId, Long eventId, CommentDtoText commentDtoText);
 
@@ -17,7 +17,7 @@ public interface CommentService {
 
     void deleteCommentByUser(Long userId, Long eventId, Long comId);
 
-    List<CommentDto> getAllCommentsByAdmin(Long eventId);
+    List<CommentDto> getAllCommentsByAdmin(Long eventId, Integer from, Integer size);
 
     void deleteCommentByAdmin(Long comId);
 

@@ -1,6 +1,8 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.CommentDto;
@@ -31,22 +33,24 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public List<CommentDtoText> getAllComments(Long eventId) {
+    public List<CommentDtoText> getAllComments(Long eventId, Integer from, Integer size) {
 
         checkUtil.checkEventId(eventId);
-
-        List<Comment> commentList = commentRepository.findAllByEventId(eventId);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
 
         return commentList.stream().map(CommentMapper::toCommentDtoText).collect(Collectors.toList());
     }
 
     @Override
-    public List<CommentDto> getAllCommentsByUser(Long userId, Long eventId) {
+    public List<CommentDto> getAllCommentsByUser(Long userId, Long eventId, Integer from, Integer size) {
 
         checkUtil.userExists(userId);
         checkUtil.checkEventId(eventId);
 
-        List<Comment> commentList = commentRepository.findAllByEventId(eventId);
+        Pageable pageable = PageRequest.of(from / size, size);
+
+        List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
 
         return commentList.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }
@@ -135,11 +139,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDto> getAllCommentsByAdmin(Long eventId) {
+    public List<CommentDto> getAllCommentsByAdmin(Long eventId, Integer from, Integer size) {
 
         checkUtil.checkEventId(eventId);
-
-        List<Comment> commentList = commentRepository.findAllByEventId(eventId);
+        Pageable pageable = PageRequest.of(from / size, size);
+        List<Comment> commentList = commentRepository.findAllByEventId(eventId, pageable);
 
         return commentList.stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }

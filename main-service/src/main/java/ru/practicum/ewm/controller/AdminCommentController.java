@@ -20,9 +20,11 @@ public class AdminCommentController {
     private final CommentService commentService;
 
     @GetMapping("/{eventId}")
-    public List<CommentDto> getAllCommentsByAdmin(@PathVariable Long eventId) {
+    public List<CommentDto> getAllCommentsByAdmin(@PathVariable Long eventId,
+                                                  @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                                  @RequestParam(value = "size", defaultValue = "10") Integer size) {
         log.info("Invoked AdminCommentController.getAllCommentsByAdmin method with eventId = {}", eventId);
-        return commentService.getAllCommentsByAdmin(eventId);
+        return commentService.getAllCommentsByAdmin(eventId, from, size);
     }
 
     @DeleteMapping("/{comId}")
